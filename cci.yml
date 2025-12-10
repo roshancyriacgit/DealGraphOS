@@ -1,0 +1,21 @@
+
+- id: "IN.CCI.THRESHOLD.001"
+  name: "CCI combination thresholds"
+  description: "Flag need to check CCI combination thresholds based on deal size."
+  scope: "cci"
+  conditions:
+    - field: "jurisdiction"
+      op: "eq"
+      value: "india"
+    - field: "deal_size_crore"
+      op: "gte"
+      value: 2000
+  effects:
+    checklist:
+      - label: "Evaluate CCI combination thresholds for the parties / group and determine whether a filing is required or can be structured within exemptions."
+        owner_role: "associate"
+    risks:
+      - code: "CCI_REVIEW_REQUIRED"
+        severity: "amber"
+        title: "Competition law review recommended"
+        description: "Transaction size suggests CCI thresholds may be relevant – competition analysis required."

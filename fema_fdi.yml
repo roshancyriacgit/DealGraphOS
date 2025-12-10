@@ -1,0 +1,38 @@
+
+- id: "IN.FEMA.FDI.001"
+  name: "FDI route and eligibility"
+  description: "High-level FEMA / FDI route check based on non-resident participation."
+  scope: "fema_fdi"
+  conditions:
+    - field: "jurisdiction"
+      op: "eq"
+      value: "india"
+    - field: "has_non_resident_investor"
+      op: "is_true"
+  effects:
+    checklist:
+      - label: "Confirm applicable FDI route (automatic / government) for the sector and map all conditions / caps / pricing guidelines."
+        owner_role: "associate"
+      - label: "Confirm form of instrument is permitted under applicable FDI regulations and sectoral norms."
+        owner_role: "associate"
+    risks:
+      - code: "FDI_SECTORAL_REVIEW"
+        severity: "amber"
+        title: "FDI sectoral review required"
+        description: "Non-resident investor involved – sectoral caps, routes and pricing need to be confirmed for FEMA compliance."
+
+- id: "IN.FEMA.FDI.002"
+  name: "FDI filings and post-transaction reporting"
+  description: "Baseline FEMA reporting obligations."
+  scope: "fema_fdi"
+  conditions:
+    - field: "jurisdiction"
+      op: "eq"
+      value: "india"
+    - field: "has_non_resident_investor"
+      op: "is_true"
+  effects:
+    checklist:
+      - label: "Identify and calendar all FEMA / RBI filings (e.g., FC-GPR/FC-TRS or subsequent reporting formats) with timelines and responsibility allocation."
+        owner_role: "associate"
+    risks: []

@@ -1,0 +1,446 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DealGraphOS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+      background: radial-gradient(circle at top, #111827 0, #020617 46%, #020617 100%);
+      color: #e5e7eb;
+      min-height: 100vh;
+    }
+    .shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px 20px 26px;
+    }
+    h1 {
+      font-size: 20px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin: 0 0 4px;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 18px;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr) 300px;
+      gap: 18px;
+    }
+    .panel {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(17, 24, 39, 0.98));
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      box-shadow: 0 22px 60px rgba(15, 23, 42, 0.9);
+      padding: 14px 14px 12px;
+      display: flex;
+      flex-direction: column;
+    }
+    .panel-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: #9ca3af;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .panel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #4f46e5;
+      box-shadow: 0 0 0 6px rgba(79, 70, 229, 0.18);
+    }
+    .deal-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: calc(100vh - 220px);
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .deal-card {
+      border-radius: 12px;
+      padding: 8px 9px;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 1));
+      border: 1px solid rgba(31, 41, 55, 0.8);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .deal-card[data-active="true"] {
+      border-color: rgba(129, 140, 248, 0.85);
+      box-shadow: 0 12px 30px rgba(55, 65, 81, 0.9);
+      background: linear-gradient(135deg, rgba(31, 41, 55, 0.98), rgba(15, 23, 42, 0.98));
+    }
+    .deal-title {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .deal-meta {
+      font-size: 11px;
+      color: #9ca3af;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pill {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      padding: 2px 8px;
+      font-size: 11px;
+    }
+    .pill-primary {
+      border-color: rgba(129, 140, 248, 0.9);
+      background: rgba(79, 70, 229, 0.2);
+      color: #c7d2fe;
+    }
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .input {
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.9);
+      padding: 7px 9px;
+      font-size: 12px;
+      color: #e5e7eb;
+      outline: none;
+    }
+    .input::placeholder {
+      color: rgba(148, 163, 184, 0.75);
+    }
+    .input:focus {
+      border-color: rgba(129, 140, 248, 0.95);
+      box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.45);
+    }
+    .button {
+      border-radius: 999px;
+      border: none;
+      outline: none;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      color: white;
+      background: radial-gradient(circle at 20% 0, #6366f1 0, #4f46e5 40%, #0ea5e9 100%);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 16px 36px rgba(30, 64, 175, 0.9);
+    }
+    .button span {
+      font-size: 14px;
+    }
+    .no-deals {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 8px;
+    }
+    .meta-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .meta-title h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .meta-title p {
+      margin: 2px 0 0;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+    .badge-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 4px 8px;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.9);
+    }
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+    .grid-two {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .subcard {
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.98), rgba(17, 24, 39, 0.98));
+      padding: 10px 11px 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .subcard-header {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #9ca3af;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .subcard-body {
+      font-size: 12px;
+      color: #e5e7eb;
+      opacity: 0.9;
+    }
+    .intel-block {
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      padding: 8px 10px 7px;
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.98));
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .intel-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #9ca3af;
+      margin-bottom: 4px;
+    }
+    .intel-secondary {
+      margin-top: 2px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    @media (max-width: 1024px) {
+      .layout {
+        grid-template-columns: 260px minmax(0, 1fr);
+        grid-template-rows: auto auto;
+        grid-template-areas:
+          "left center"
+          "right right";
+      }
+      .panel-left { grid-area: left; }
+      .panel-center { grid-area: center; }
+      .panel-right { grid-area: right; }
+    }
+    @media (max-width: 800px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+        grid-auto-rows: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <h1>DealGraphOS</h1>
+    <div class="subtitle">Local-first deal intelligence substrate. All data and computations stay on this machine.</div>
+
+    <div class="layout">
+      <section class="panel panel-left">
+        <div class="panel-title"><div class="panel-dot"></div>Matters</div>
+        <div id="deal-list" class="deal-list"></div>
+        <div id="no-deals" class="no-deals">No matters yet. Create your first transaction below.</div>
+        <form id="deal-form" class="form">
+          <input class="input" name="name" placeholder="Deal name (e.g., Series C in FintechCo)" required />
+          <input class="input" name="jurisdiction" value="India" />
+          <button class="button" type="submit"><span>+</span>Create</button>
+        </form>
+      </section>
+
+      <section class="panel panel-center">
+        <div class="panel-title"><div class="panel-dot"></div>Deal Canvas</div>
+        <div class="meta-header">
+          <div class="meta-title">
+            <h2 id="deal-name">No active matter</h2>
+            <p id="deal-desc">Select or create a deal on the left. Structure, workflows and risks will appear here.</p>
+          </div>
+          <div class="badge-row">
+            <div class="badge">
+              <div class="badge-dot"></div>
+              <span id="deal-status">Idle substrate</span>
+            </div>
+            <div class="badge">
+              <span>Jurisdiction:</span>
+              <span id="deal-jurisdiction">–</span>
+            </div>
+          </div>
+        </div>
+        <div class="grid-two">
+          <div class="subcard">
+            <div class="subcard-header">
+              <span>Structure map</span>
+              <span>Substrate</span>
+            </div>
+            <div class="subcard-body" id="structure-body">
+              Parties, instruments, routes and approvals for the active deal will be mapped here as you extend the engine.
+            </div>
+          </div>
+          <div class="subcard">
+            <div class="subcard-header">
+              <span>Risk map</span>
+              <span>Signals</span>
+            </div>
+            <div class="subcard-body" id="risk-body">
+              Risk flags derived from the rule engine will surface here (e.g., FDI caps, control thresholds, disclosure stress).
+            </div>
+          </div>
+        </div>
+        <div class="subcard" style="margin-top:10px;">
+          <div class="subcard-header">
+            <span>Workflows</span>
+            <span>Approvals · CPs · Filings</span>
+          </div>
+          <div class="subcard-body" id="workflow-body">
+            Dynamic approvals, CPs and filing checklists generated from the substrate will appear here for the active scenario.
+          </div>
+        </div>
+      </section>
+
+      <section class="panel panel-right">
+        <div class="panel-title"><div class="panel-dot"></div>Intelligence</div>
+        <div class="intel-block">
+          <div class="intel-label">Local only</div>
+          <div>All computations and storage are local to this machine. No external calls are made by DealGraphOS.</div>
+          <div class="intel-secondary">This app is designed as a private substrate you can run and share as a single executable.</div>
+        </div>
+        <div class="intel-block">
+          <div class="intel-label">Draft layer</div>
+          <div>Everything generated is a draft suggestion for professional review, not legal advice.</div>
+          <div class="intel-secondary">The substrate compresses work; it does not replace human judgment.</div>
+        </div>
+        <div class="intel-block">
+          <div class="intel-label">Extensibility</div>
+          <div>Rules, templates and workflows live in packs. Jurisdiction and firm-specific logic can be added without touching the core engine.</div>
+          <div class="intel-secondary">Use this skeleton to plug in India rules, CAM packs, and more.</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "/api/deals";
+
+    async function fetchDeals() {
+      const res = await fetch(API_BASE + "/");
+      if (!res.ok) return [];
+      return await res.json();
+    }
+
+    function renderDeals(deals, activeId) {
+      const list = document.getElementById("deal-list");
+      const noDeals = document.getElementById("no-deals");
+      list.innerHTML = "";
+      if (!deals.length) {
+        noDeals.style.display = "block";
+        return;
+      }
+      noDeals.style.display = "none";
+      deals.forEach(d => {
+        const card = document.createElement("div");
+        card.className = "deal-card";
+        card.dataset.id = d.id;
+        card.dataset.active = String(d.id) === String(activeId) ? "true" : "false";
+
+        const title = document.createElement("div");
+        title.className = "deal-title";
+        title.textContent = d.name;
+
+        const meta = document.createElement("div");
+        meta.className = "deal-meta";
+        const status = document.createElement("span");
+        status.textContent = (d.status || "intake").toUpperCase();
+        const pill = document.createElement("span");
+        pill.className = "pill pill-primary";
+        pill.textContent = (d.jurisdiction || "–").toUpperCase();
+
+        meta.appendChild(status);
+        meta.appendChild(pill);
+
+        card.appendChild(title);
+        card.appendChild(meta);
+
+        card.addEventListener("click", () => {
+          selectDeal(d);
+          renderDeals(deals, d.id);
+        });
+
+        list.appendChild(card);
+      });
+    }
+
+    function selectDeal(deal) {
+      document.getElementById("deal-name").textContent = deal.name;
+      document.getElementById("deal-desc").textContent =
+        deal.description || "Use this matter as the substrate for scenarios, workflows and document generation.";
+      document.getElementById("deal-status").textContent =
+        deal.status ? deal.status.toUpperCase() : "INTAKE";
+      document.getElementById("deal-jurisdiction").textContent =
+        (deal.jurisdiction || "–").toUpperCase();
+    }
+
+    async function init() {
+      let deals = await fetchDeals();
+      let activeId = deals[0]?.id;
+      renderDeals(deals, activeId);
+      if (deals[0]) selectDeal(deals[0]);
+
+      const form = document.getElementById("deal-form");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const fd = new FormData(form);
+        const payload = {
+          name: fd.get("name"),
+          jurisdiction: fd.get("jurisdiction") || "India",
+        };
+        const res = await fetch(API_BASE + "/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          form.reset();
+          deals = await fetchDeals();
+          activeId = deals[0]?.id;
+          renderDeals(deals, activeId);
+          if (deals[0]) selectDeal(deals[0]);
+        }
+      });
+    }
+
+    window.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>

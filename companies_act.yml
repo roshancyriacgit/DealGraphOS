@@ -1,0 +1,49 @@
+
+- id: "IN.CA.BOARD.001"
+  name: "Board approvals under Companies Act"
+  description: "Baseline board approvals for Indian corporate actions (sections / rules to be tailored)."
+  scope: "companies_act"
+  conditions:
+    - field: "jurisdiction"
+      op: "eq"
+      value: "india"
+  effects:
+    checklist:
+      - label: "Identify all Companies Act board approvals required for this transaction (issue/transfer of securities, borrowings, guarantees, investments, related party transactions, etc.) and obtain them in correct sequence."
+        owner_role: "associate"
+    risks: []
+
+- id: "IN.CA.SHAREHOLDER.001"
+  name: "Shareholder approvals and special resolutions"
+  description: "Flag shareholder approval needs at high-level based on control acquisition and deal profile."
+  scope: "companies_act"
+  conditions:
+    - field: "jurisdiction"
+      op: "eq"
+      value: "india"
+    - field: "control_acquisition_percent"
+      op: "gte"
+      value: 25
+  effects:
+    checklist:
+      - label: "Analyse Companies Act and AoA to determine if ordinary / special shareholder resolutions are required for the proposed acquisition / investment structure."
+        owner_role: "associate"
+    risks:
+      - code: "CA_SHAREHOLDER_APPROVAL"
+        severity: "amber"
+        title: "Potential shareholder approval requirements"
+        description: "Control acquisition at or above 25% – review Companies Act and charter documents for required shareholder approvals."
+
+- id: "IN.CA.MANAGEMENT.001"
+  name: "Director and KMP changes"
+  description: "Ensure director / KMP changes dovetail with transaction steps."
+  scope: "companies_act"
+  conditions:
+    - field: "jurisdiction"
+      op: "eq"
+      value: "india"
+  effects:
+    checklist:
+      - label: "Map any director / KMP changes required at signing or closing (including filings of DIR-12, disclosure of interests, committee reconstitution)."
+        owner_role: "associate"
+    risks: []

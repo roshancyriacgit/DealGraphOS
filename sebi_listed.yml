@@ -1,0 +1,43 @@
+
+- id: "IN.SEBI.LISTED.001"
+  name: "Listed company – SEBI / LODR implications"
+  description: "High-level SEBI / LODR and takeover code attention for listed companies."
+  scope: "sebi_listed"
+  conditions:
+    - field: "jurisdiction"
+      op: "eq"
+      value: "india"
+    - field: "listed"
+      op: "is_true"
+  effects:
+    checklist:
+      - label: "Identify all SEBI / LODR disclosure, pricing and shareholder approval requirements triggered by the transaction (including material RPTs, preferential issues, related disclosures)."
+        owner_role: "associate"
+    risks:
+      - code: "LISTED_ENTITY_REGIME"
+        severity: "amber"
+        title: "Listed entity – SEBI / LODR overlay"
+        description: "Target or issuer is listed – SEBI, LODR and stock exchange requirements overlay Companies Act obligations."
+
+- id: "IN.SEBI.TAKEOVER.001"
+  name: "Substantial acquisition in listed entity"
+  description: "Flag potential takeover code implications for control acquisitions in listed companies."
+  scope: "sebi_takeover"
+  conditions:
+    - field: "jurisdiction"
+      op: "eq"
+      value: "india"
+    - field: "listed"
+      op: "is_true"
+    - field: "control_acquisition_percent"
+      op: "gte"
+      value: 25
+  effects:
+    checklist:
+      - label: "Evaluate SEBI takeover code triggers (open offer thresholds, exemptions, pricing and timing requirements) for the proposed acquisition."
+        owner_role: "partner"
+    risks:
+      - code: "TAKEOVER_CODE_REVIEW"
+        severity: "red"
+        title: "Potential open offer / takeover implications"
+        description: "Control acquisition at or above typical open-offer thresholds in a listed entity – takeover code analysis required."
